@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "Color Blast",
+    "slug": "color-blast",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+
+    "android": {
+      "package": "com.minish4279niya.colorblast",
+      "versionCode": 2,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#17002D"
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
+      ]
+    },
+
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#17002D"
+        }
+      ],
+      "expo-status-bar",
+      "expo-audio"
+    ],
+
+    "extra": {
+      "eas": {
+        "projectId": "26d4d03f-ad02-46f6-a769-3b2d493c776e"
+      }
+    }
+  }
+}
