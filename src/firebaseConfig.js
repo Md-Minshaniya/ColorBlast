@@ -2,7 +2,7 @@ import { getApp, getApps, initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAR-EXFfhrG9Xt80K9ixR6pEyP4lI9WJyw",
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
   authDomain: "colorblastgame.firebaseapp.com",
   databaseURL:
     "https://colorblastgame-default-rtdb.firebaseio.com",
