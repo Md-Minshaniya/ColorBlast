@@ -1,6 +1,10 @@
 import React, { useEffect } from "react";
-//import { Audio } from "expo-av";
-import { View, StyleSheet, Image, Dimensions } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Image,
+  Dimensions,
+} from "react-native";
 
 const { width, height } = Dimensions.get("window");
 
@@ -11,7 +15,7 @@ export default function LoadingScreen({ navigation }) {
     }, 4200);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
@@ -29,6 +33,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#17002D",
   },
+
   gif: {
     width,
     height,

@@ -1,19 +1,17 @@
-import React, { useState, useEffect, useRef } from "react";
-//import { Audio } from "expo-av";
+import React, { useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
   ImageBackground,
   ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 let GAME_SETTINGS = {
   boardSize: 7,
   rounds: 18,
-  soundOn: true,
 };
 
 export function getGameSettings() {
@@ -21,102 +19,25 @@ export function getGameSettings() {
 }
 
 export default function SettingsScreen({ navigation }) {
-  const musicRef = useRef(null);
+  const [boardSize, setBoardSize] = useState(
+    GAME_SETTINGS.boardSize
+  );
 
-  const [boardSize, setBoardSize] = useState(GAME_SETTINGS.boardSize);
-  const [rounds, setRounds] = useState(GAME_SETTINGS.rounds);
-  const [soundOn, setSoundOn] = useState(GAME_SETTINGS.soundOn);
+  const [rounds, setRounds] = useState(
+    GAME_SETTINGS.rounds
+  );
 
-  useEffect(() => {
-    if (GAME_SETTINGS.soundOn) {
-      playHomeMusic();
-    }
-
-    return () => {
-      stopHomeMusic();
-    };
-  }, []);
-
- async function playHomeMusic() {
-  try {
-    if (!getGameSettings().soundOn) return;
-
-    if (musicRef.current) return;
-
-    const { sound } = await Audio.Sound.createAsync(
-      require("../../assets/sounds/home-music.mp3"),
-      {
-        isLooping: true,
-        volume: 0.35,
-      }
-    );
-
-    musicRef.current = sound;
-    await sound.playAsync();
-  } catch (error) {
-    console.log("Music error:", error);
-  }
-}
-
-  async function stopHomeMusic() {
-    try {
-      if (musicRef.current) {
-        await musicRef.current.stopAsync();
-        await musicRef.current.unloadAsync();
-        musicRef.current = null;
-      }
-    } catch (e) {
-      console.log("Stop settings music error:", e);
-    }
-  }
-
-  async function playClickSound() {
-  try {
-    if (!getGameSettings().soundOn) return;
-
-    const { sound } = await Audio.Sound.createAsync(
-      require("../../assets/sounds/click.mp3")
-    );
-
-    await sound.playAsync();
-
-    setTimeout(() => {
-      sound.unloadAsync();
-    }, 1000);
-  } catch (error) {
-    console.log("Click sound error:", error);
-  }
-}
-
-  async function selectBoardSize(size) {
-    await playClickSound();
+  function selectBoardSize(size) {
     GAME_SETTINGS.boardSize = size;
     setBoardSize(size);
   }
 
-  async function selectRounds(value) {
-    await playClickSound();
+  function selectRounds(value) {
     GAME_SETTINGS.rounds = value;
     setRounds(value);
   }
 
-  async function toggleSound() {
-    await playClickSound();
-
-    const newValue = !soundOn;
-    GAME_SETTINGS.soundOn = newValue;
-    setSoundOn(newValue);
-
-    if (newValue) {
-      playHomeMusic();
-    } else {
-      stopHomeMusic();
-    }
-  }
-
-  async function goBack() {
-    await playClickSound();
-    await stopHomeMusic();
+  function goBack() {
     navigation.goBack();
   }
 
@@ -127,19 +48,33 @@ export default function SettingsScreen({ navigation }) {
       resizeMode="cover"
     >
       <View style={styles.overlay}>
-        <TouchableOpacity style={styles.topBackButton} onPress={goBack}>
-          <Ionicons name="arrow-back" size={34} color="#fff" />
+        <TouchableOpacity
+          style={styles.topBackButton}
+          onPress={goBack}
+          activeOpacity={0.8}
+        >
+          <Ionicons
+            name="arrow-back"
+            size={34}
+            color="#FFFFFF"
+          />
         </TouchableOpacity>
 
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
           <Text style={styles.title}>⚙️ Settings</Text>
 
           <Text style={styles.instruction}>
-            Select board size, rounds, and sound before starting the game.
+            Select the board size and number of rounds before
+            starting the game.
           </Text>
 
           <View style={styles.sectionBox}>
-            <Text style={styles.sectionTitle}>🎮 Select Board Size</Text>
+            <Text style={styles.sectionTitle}>
+              🎮 Select Board Size
+            </Text>
 
             <View style={styles.optionRow}>
               {[7, 10, 15].map((size) => (
@@ -147,22 +82,42 @@ export default function SettingsScreen({ navigation }) {
                   key={size}
                   style={[
                     styles.boardOption,
-                    boardSize === size && styles.selectedBoard,
+                    boardSize === size &&
+                      styles.selectedBoard,
                   ]}
                   onPress={() => selectBoardSize(size)}
+                  activeOpacity={0.8}
                 >
-                  <Text style={styles.optionText}>{size}×{size}</Text>
+                  <Text
+                    style={[
+                      styles.optionText,
+                      boardSize === size &&
+                        styles.selectedOptionText,
+                    ]}
+                  >
+                    {size} × {size}
+                  </Text>
                 </TouchableOpacity>
               ))}
             </View>
 
-            <Text style={styles.selectedInfo}>
-              Current Board: {boardSize} × {boardSize}
-            </Text>
+            <View style={styles.currentSelectionBox}>
+              <Ionicons
+                name="grid-outline"
+                size={20}
+                color="#FFD166"
+              />
+
+              <Text style={styles.selectedInfo}>
+                Current Board: {boardSize} × {boardSize}
+              </Text>
+            </View>
           </View>
 
           <View style={styles.sectionBox}>
-            <Text style={styles.sectionTitle}>🔄 Select Rounds</Text>
+            <Text style={styles.sectionTitle}>
+              🔄 Select Rounds
+            </Text>
 
             <View style={styles.optionRow}>
               {[10, 18, 25, 35].map((value) => (
@@ -170,70 +125,148 @@ export default function SettingsScreen({ navigation }) {
                   key={value}
                   style={[
                     styles.roundOption,
-                    rounds === value && styles.selectedRound,
+                    rounds === value &&
+                      styles.selectedRound,
                   ]}
                   onPress={() => selectRounds(value)}
+                  activeOpacity={0.8}
                 >
-                  <Text style={styles.optionText}>{value}</Text>
+                  <Text
+                    style={[
+                      styles.optionText,
+                      rounds === value &&
+                        styles.selectedOptionText,
+                    ]}
+                  >
+                    {value}
+                  </Text>
                 </TouchableOpacity>
               ))}
             </View>
 
-            <Text style={styles.selectedInfo}>Current Rounds: {rounds}</Text>
-          </View>
-
-          <View style={styles.sectionBox}>
-            <Text style={styles.sectionTitle}>🔊 Sound Control</Text>
-
-            <TouchableOpacity
-              style={[
-                styles.soundButton,
-                soundOn ? styles.soundOnButton : styles.soundOffButton,
-              ]}
-              onPress={toggleSound}
-            >
+            <View style={styles.currentSelectionBox}>
               <Ionicons
-                name={soundOn ? "volume-high" : "volume-mute"}
-                size={32}
-                color="#fff"
+                name="repeat-outline"
+                size={21}
+                color="#FFD166"
               />
-              <Text style={styles.soundButtonText}>
-                {soundOn ? "Sound ON" : "Sound OFF"}
-              </Text>
-            </TouchableOpacity>
 
-            <Text style={styles.selectedInfo}>
-              {soundOn
-                ? "Music and click sounds are enabled"
-                : "All sounds are disabled"}
-            </Text>
+              <Text style={styles.selectedInfo}>
+                Current Rounds: {rounds}
+              </Text>
+            </View>
           </View>
 
           <View style={styles.infoBox}>
-            <Text style={styles.infoTitle}>💡 Game Rules</Text>
+            <View style={styles.infoTitleRow}>
+              <Ionicons
+                name="bulb"
+                size={27}
+                color="#FFD166"
+              />
 
-            <Text style={styles.infoText}>
-              • Select tiles only near your blinking tiles.{"\n\n"}
-              • Same-colored connected tiles become yours.{"\n\n"}
-              • Previous active tiles change into random colors.{"\n\n"}
-              • Highest score wins the game.
-            </Text>
+              <Text style={styles.infoTitle}>
+                Game Rules
+              </Text>
+            </View>
+
+            <View style={styles.ruleRow}>
+              <View
+                style={[
+                  styles.ruleNumber,
+                  {
+                    backgroundColor: "#45C7F3",
+                  },
+                ]}
+              >
+                <Text style={styles.ruleNumberText}>
+                  1
+                </Text>
+              </View>
+
+              <Text style={styles.infoText}>
+                Select tiles only near your blinking tiles.
+              </Text>
+            </View>
+
+            <View style={styles.ruleRow}>
+              <View
+                style={[
+                  styles.ruleNumber,
+                  {
+                    backgroundColor: "#FF4D8D",
+                  },
+                ]}
+              >
+                <Text style={styles.ruleNumberText}>
+                  2
+                </Text>
+              </View>
+
+              <Text style={styles.infoText}>
+                Same-colored connected tiles become yours.
+              </Text>
+            </View>
+
+            <View style={styles.ruleRow}>
+              <View
+                style={[
+                  styles.ruleNumber,
+                  {
+                    backgroundColor: "#15CFA3",
+                  },
+                ]}
+              >
+                <Text style={styles.ruleNumberText}>
+                  3
+                </Text>
+              </View>
+
+              <Text style={styles.infoText}>
+                Previous active tiles change into random colors.
+              </Text>
+            </View>
+
+            <View style={styles.ruleRow}>
+              <View
+                style={[
+                  styles.ruleNumber,
+                  {
+                    backgroundColor: "#FFD166",
+                  },
+                ]}
+              >
+                <Text style={styles.ruleNumberText}>
+                  4
+                </Text>
+              </View>
+
+              <Text style={styles.infoText}>
+                The player with the highest score at the end wins.
+              </Text>
+            </View>
           </View>
         </ScrollView>
       </View>
     </ImageBackground>
   );
 }
-
 const styles = StyleSheet.create({
   bg: {
     flex: 1,
   },
+
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(23,0,45,0.58)",
-    padding: 20,
+    backgroundColor: "rgba(23,0,45,0.66)",
+    paddingHorizontal: 20,
   },
+
+  scrollContent: {
+    paddingTop: 35,
+    paddingBottom: 35,
+  },
+
   topBackButton: {
     position: "absolute",
     top: 42,
@@ -247,7 +280,16 @@ const styles = StyleSheet.create({
     zIndex: 99,
     borderWidth: 2,
     borderColor: "#FFD166",
+    shadowColor: "#000000",
+    shadowOpacity: 0.35,
+    shadowRadius: 8,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    elevation: 8,
   },
+
   title: {
     color: "#FFD166",
     fontSize: 44,
@@ -257,23 +299,35 @@ const styles = StyleSheet.create({
     textShadowColor: "#FF4FD8",
     textShadowRadius: 15,
   },
+
   instruction: {
-    color: "#fff",
+    color: "#FFFFFF",
     fontSize: 18,
     fontWeight: "800",
     textAlign: "center",
     marginTop: 12,
     marginBottom: 20,
     lineHeight: 26,
+    paddingHorizontal: 10,
   },
+
   sectionBox: {
-    backgroundColor: "#2B1740EE",
+    backgroundColor: "rgba(43,23,64,0.96)",
     borderRadius: 26,
     padding: 18,
     marginBottom: 18,
-    borderWidth: 3,
-    borderColor: "#FFD166",
+    borderWidth: 2,
+    borderColor: "rgba(255,209,102,0.75)",
+    shadowColor: "#000000",
+    shadowOpacity: 0.28,
+    shadowRadius: 10,
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    elevation: 8,
   },
+
   sectionTitle: {
     color: "#45C7F3",
     fontSize: 24,
@@ -281,86 +335,165 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 15,
   },
+
   optionRow: {
     flexDirection: "row",
     justifyContent: "center",
     flexWrap: "wrap",
     gap: 12,
   },
+
   boardOption: {
-    backgroundColor: "#33C7FF",
+    minWidth: 82,
+    backgroundColor: "#45C7F3",
     paddingVertical: 15,
-    paddingHorizontal: 20,
+    paddingHorizontal: 18,
     borderRadius: 18,
-    borderWidth: 3,
-    borderColor: "#fff",
+    borderWidth: 2,
+    borderColor: "rgba(255,255,255,0.85)",
+    alignItems: "center",
   },
+
   roundOption: {
+    minWidth: 67,
     backgroundColor: "#FF4D8D",
     paddingVertical: 15,
-    paddingHorizontal: 22,
+    paddingHorizontal: 18,
     borderRadius: 18,
-    borderWidth: 3,
-    borderColor: "#fff",
+    borderWidth: 2,
+    borderColor: "rgba(255,255,255,0.85)",
+    alignItems: "center",
   },
+
   selectedBoard: {
     backgroundColor: "#FFD166",
+    borderColor: "#FFFFFF",
+    transform: [
+      {
+        scale: 1.06,
+      },
+    ],
+    shadowColor: "#FFD166",
+    shadowOpacity: 0.55,
+    shadowRadius: 8,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    elevation: 8,
   },
+
   selectedRound: {
     backgroundColor: "#15CFA3",
+    borderColor: "#FFD166",
+    transform: [
+      {
+        scale: 1.06,
+      },
+    ],
+    shadowColor: "#15CFA3",
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    elevation: 8,
   },
+
   optionText: {
     color: "#17002D",
     fontSize: 20,
     fontWeight: "900",
   },
-  selectedInfo: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "900",
-    textAlign: "center",
-    marginTop: 16,
+
+  selectedOptionText: {
+    color: "#17002D",
   },
-  soundButton: {
-    paddingVertical: 18,
-    borderRadius: 22,
+
+  currentSelectionBox: {
+    marginTop: 16,
+    minHeight: 44,
+    borderRadius: 16,
+    backgroundColor: "rgba(255,255,255,0.07)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.12)",
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    gap: 12,
-    borderWidth: 3,
-    borderColor: "#fff",
+    gap: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
-  soundOnButton: {
-    backgroundColor: "#15CFA3",
-  },
-  soundOffButton: {
-    backgroundColor: "#FF4D6D",
-  },
-  soundButtonText: {
-    color: "#fff",
-    fontSize: 24,
+
+  selectedInfo: {
+    color: "#FFFFFF",
+    fontSize: 17,
     fontWeight: "900",
+    textAlign: "center",
   },
+
   infoBox: {
-    backgroundColor: "#2B1740EE",
+    backgroundColor: "rgba(43,23,64,0.96)",
     borderRadius: 25,
     padding: 20,
     marginBottom: 35,
-    borderWidth: 3,
+    borderWidth: 2,
     borderColor: "#45C7F3",
+    shadowColor: "#000000",
+    shadowOpacity: 0.28,
+    shadowRadius: 10,
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    elevation: 8,
   },
+
+  infoTitleRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 18,
+  },
+
   infoTitle: {
     color: "#FFD166",
     fontSize: 26,
     fontWeight: "900",
     textAlign: "center",
+  },
+
+  ruleRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
     marginBottom: 15,
   },
+
+  ruleNumber: {
+    width: 32,
+    height: 32,
+    borderRadius: 11,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 11,
+    marginTop: 1,
+    borderWidth: 1.5,
+    borderColor: "rgba(255,255,255,0.75)",
+  },
+
+  ruleNumberText: {
+    color: "#17002D",
+    fontSize: 15,
+    fontWeight: "900",
+  },
+
   infoText: {
-    color: "#fff",
-    fontSize: 18,
-    lineHeight: 29,
+    flex: 1,
+    color: "#FFFFFF",
+    fontSize: 17,
+    lineHeight: 25,
     fontWeight: "700",
   },
 });

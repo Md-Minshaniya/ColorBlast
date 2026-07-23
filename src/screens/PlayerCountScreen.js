@@ -1,19 +1,28 @@
 import React, { useEffect, useRef } from "react";
-import { getGameSettings } from "./SettingsScreen";
-//import { Audio } from "expo-av";
 import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   Animated,
   Dimensions,
+  TouchableOpacity,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 const { width, height } = Dimensions.get("window");
 
-const FLOATS = ["🎮", "👥", "✨", "💥", "🏆", "🌈", "🔵", "🟢", "🟡", "🟣"];
+const FLOATS = [
+  "🎮",
+  "👥",
+  "✨",
+  "💥",
+  "🏆",
+  "🌈",
+  "🔵",
+  "🟢",
+  "🟡",
+  "🟣",
+];
 
 function FloatingEmoji({ emoji, index }) {
   const floatAnim = useRef(new Animated.Value(0)).current;
@@ -60,112 +69,92 @@ function FloatingEmoji({ emoji, index }) {
 }
 
 export default function PlayerCountScreen({ navigation }) {
-  const musicRef = useRef(null);
-
-  useEffect(() => {
-    playHomeMusic();
-
-    return () => {
-      stopHomeMusic();
-    };
-  }, []);
-
-  async function playHomeMusic() {
-  try {
-    if (!getGameSettings().soundOn) return;
-
-    if (musicRef.current) return;
-
-    const { sound } = await Audio.Sound.createAsync(
-      require("../../assets/sounds/home-music.mp3"),
-      {
-        isLooping: true,
-        volume: 0.35,
-      }
-    );
-
-    musicRef.current = sound;
-    await sound.playAsync();
-  } catch (error) {
-    console.log("Music error:", error);
-  }
-}
-
-  async function stopHomeMusic() {
-    try {
-      if (musicRef.current) {
-        await musicRef.current.stopAsync();
-        await musicRef.current.unloadAsync();
-        musicRef.current = null;
-      }
-    } catch (error) {
-      console.log("Stop player count music error:", error);
-    }
-  }
-
-  async function playClickSound() {
-  try {
-    if (!getGameSettings().soundOn) return;
-
-    const { sound } = await Audio.Sound.createAsync(
-      require("../../assets/sounds/click.mp3")
-    );
-
-    await sound.playAsync();
-
-    setTimeout(() => {
-      sound.unloadAsync();
-    }, 1000);
-  } catch (error) {
-    console.log("Click sound error:", error);
-  }
-}
-
-  async function startGame(playersCount) {
-    await playClickSound();
-    await stopHomeMusic();
-
+  function startGame(playersCount) {
     navigation.navigate("Game", {
       mode: "multi",
       playersCount,
     });
   }
 
-  async function goBackMode() {
-    await playClickSound();
-    await stopHomeMusic();
-
+  function goBackMode() {
     navigation.navigate("Mode");
   }
 
   return (
     <View style={styles.container}>
       {FLOATS.map((emoji, index) => (
-        <FloatingEmoji key={index} emoji={emoji} index={index} />
+        <FloatingEmoji
+          key={index}
+          emoji={emoji}
+          index={index}
+        />
       ))}
 
       <View style={styles.card}>
-        <Text style={styles.smallTitle}>👥 Multiplayer Mode 👥</Text>
-        <Text style={styles.title}>Choose Players</Text>
+        <Text style={styles.smallTitle}>
+          👥 Multiplayer Mode 👥
+        </Text>
 
-        <TouchableOpacity style={styles.player2} onPress={() => startGame(2)}>
-          <Text style={styles.emojiText}>👤 👤</Text>
-          <Text style={styles.buttonText}>2 Players</Text>
+        <Text style={styles.title}>
+          Choose Players
+        </Text>
+
+        <TouchableOpacity
+          style={styles.player2}
+          onPress={() => startGame(2)}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.emojiText}>
+            👤 👤
+          </Text>
+
+          <Text style={styles.buttonText}>
+            2 Players
+          </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.player3} onPress={() => startGame(3)}>
-          <Text style={styles.emojiText}>👤 👤 👤</Text>
-          <Text style={styles.buttonText}>3 Players</Text>
+        <TouchableOpacity
+          style={styles.player3}
+          onPress={() => startGame(3)}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.emojiText}>
+            👤 👤 👤
+          </Text>
+
+          <Text style={styles.buttonText}>
+            3 Players
+          </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.player4} onPress={() => startGame(4)}>
-          <Text style={styles.emojiText}>👤 👤 👤 👤</Text>
-          <Text style={styles.buttonText}>4 Players</Text>
+        <TouchableOpacity
+          style={styles.player4}
+          onPress={() => startGame(4)}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.emojiText}>
+            👤 👤 👤 👤
+          </Text>
+
+          <Text style={styles.buttonText}>
+            4 Players
+          </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.backButton} onPress={goBackMode}>
-          <Ionicons name="arrow-back-circle" size={30} color="#fff" />
-          <Text style={styles.buttonText}>Back</Text>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={goBackMode}
+          activeOpacity={0.8}
+        >
+          <Ionicons
+            name="arrow-back-circle"
+            size={30}
+            color="#fff"
+          />
+
+          <Text style={styles.buttonText}>
+            Back
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -180,11 +169,13 @@ const styles = StyleSheet.create({
     padding: 22,
     overflow: "hidden",
   },
+
   floatEmoji: {
     position: "absolute",
     fontSize: 30,
     opacity: 0.65,
   },
+
   card: {
     backgroundColor: "#2B1740DD",
     borderRadius: 35,
@@ -196,6 +187,7 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     elevation: 18,
   },
+
   smallTitle: {
     color: "#45C7F3",
     fontSize: 20,
@@ -203,6 +195,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 10,
   },
+
   title: {
     color: "#FFD166",
     fontSize: 39,
@@ -212,6 +205,7 @@ const styles = StyleSheet.create({
     textShadowColor: "#FF4D8D",
     textShadowRadius: 12,
   },
+
   player2: {
     backgroundColor: "#33C7FF",
     paddingVertical: 16,
@@ -223,6 +217,7 @@ const styles = StyleSheet.create({
     shadowRadius: 15,
     elevation: 12,
   },
+
   player3: {
     backgroundColor: "#FFD700",
     paddingVertical: 16,
@@ -234,6 +229,7 @@ const styles = StyleSheet.create({
     shadowRadius: 15,
     elevation: 12,
   },
+
   player4: {
     backgroundColor: "#FF4FD8",
     paddingVertical: 16,
@@ -245,6 +241,7 @@ const styles = StyleSheet.create({
     shadowRadius: 15,
     elevation: 12,
   },
+
   backButton: {
     backgroundColor: "#FF4D6D",
     paddingVertical: 18,
@@ -259,10 +256,12 @@ const styles = StyleSheet.create({
     shadowRadius: 15,
     elevation: 12,
   },
+
   emojiText: {
     fontSize: 26,
     marginBottom: 5,
   },
+
   buttonText: {
     color: "#fff",
     fontSize: 25,

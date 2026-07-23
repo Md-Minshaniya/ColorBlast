@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   ImageBackground,
   Alert,
   ScrollView,
@@ -20,6 +19,7 @@ import {
   limitToLast,
 } from "firebase/database";
 import { db } from "../firebaseConfig";
+import { TouchableOpacity } from "react-native";
 
 const COLORS = [
   "#45C7F3",
@@ -389,9 +389,8 @@ export default function OnlineGameScreen({ navigation, route }) {
         </Text>
 
         <Text style={styles.settingsText}>
-          Board: {boardSize} × {boardSize} | Rounds:{" "}
-          {room.rounds || room.roundsLeft} | Sound:{" "}
-          {room.soundOn === false ? "Off" : "On"}
+         Board: {boardSize} × {boardSize} | Rounds:{" "}
+         {room.rounds || room.roundsLeft}
         </Text>
 
         <View style={styles.scoreRow}>

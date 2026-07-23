@@ -3,13 +3,13 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
+  
   Animated,
   ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { getGameSettings } from "./SettingsScreen";
-
+import { TouchableOpacity } from "react-native";
 const TURN_TIME = 10;
 
 const COLORS = [
@@ -153,17 +153,11 @@ export default function GameScreen({ navigation, route }) {
 
   const blinkAnim = useRef(new Animated.Value(0)).current;
 
-  async function playGameMusic() {
-    return;
-  }
+  
 
-  async function stopGameMusic() {
-    return;
-  }
+  
 
-  async function playClickSound() {
-    return;
-  }
+  
 
   useEffect(() => {
     Animated.loop(
@@ -182,13 +176,7 @@ export default function GameScreen({ navigation, route }) {
     ).start();
   }, []);
 
-  useEffect(() => {
-    playGameMusic();
-
-    return () => {
-      stopGameMusic();
-    };
-  }, []);
+  
 
   useEffect(() => {
     if (gameEnded || paused) return;
@@ -260,7 +248,7 @@ export default function GameScreen({ navigation, route }) {
     if (gameEnded) return;
 
     setGameEnded(true);
-    stopGameMusic();
+    
 
     const winner = Object.keys(finalScores).reduce((a, b) =>
       finalScores[a] > finalScores[b] ? a : b
@@ -454,10 +442,8 @@ export default function GameScreen({ navigation, route }) {
       <View style={styles.topBar}>
         <TouchableOpacity
           style={styles.iconButton}
-          onPress={async () => {
-            await playClickSound();
-            await stopGameMusic();
-            navigation.goBack();
+          onPress={() => {
+           navigation.goBack();
           }}
         >
           <Ionicons name="arrow-back" size={32} color="#fff" />
@@ -479,8 +465,7 @@ export default function GameScreen({ navigation, route }) {
             <View style={styles.menuBox}>
               <TouchableOpacity
                 style={styles.pauseButton}
-                onPress={async () => {
-                  await playClickSound();
+                onPress={() => {
                   togglePause();
                 }}
               >
@@ -491,8 +476,7 @@ export default function GameScreen({ navigation, route }) {
 
               <TouchableOpacity
                 style={styles.restartMenuButton}
-                onPress={async () => {
-                  await playClickSound();
+                onPress={() => {
                   restartGame();
                 }}
               >
